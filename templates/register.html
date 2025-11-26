@@ -1,0 +1,408 @@
+<!-- templates/register.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .register-container {
+        min-height: 100vh;
+        padding-top: 60px; /* 为导航栏留出空间 */
+        padding-bottom: 2rem;
+        box-sizing: border-box;
+        background: var(--white);
+    }
+    
+    .register-card {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin: 0 auto;
+        max-width: 800px;
+        transition: transform 0.3s ease;
+    }
+    
+    .register-header {
+        background: linear-gradient(135deg, var(--red-1) 0%, var(--red-2) 100%);
+        padding: 2rem;
+        text-align: center;
+        color: var(--white);
+        position: relative;
+    }
+    
+    .register-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .register-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0;
+        font-weight: 300;
+    }
+    
+    .register-body {
+        padding: 2rem;
+    }
+    
+    .form-step {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: var(--gray-bg);
+        border-left: 4px solid var(--red-2);
+    }
+    
+    .step-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .step-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .form-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+        background-color: var(--white);
+    }
+    
+    .form-select:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(194, 0, 65, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: var(--border-color);
+        color: var(--text-dark);
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-bg);
+        border-color: var(--gray-bg);
+    }
+    
+    .interest-section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .category-title {
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: var(--white);
+        border-radius: 8px;
+        border-left: 4px solid var(--red-2);
+    }
+    
+    .category-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .interest-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .interest-checkbox {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        margin-bottom: 0.25rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .interest-checkbox:hover {
+        background: var(--gray-bg);
+    }
+    
+    .interest-checkbox input[type="checkbox"] {
+        margin-right: 0.5rem;
+        accent-color: var(--red-2);
+    }
+    
+    .progress-bar {
+        height: 8px;
+        background: var(--gray-bg);
+        border-radius: 4px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        width: 33%;
+        transition: width 0.3s ease;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-header">
+            <h1 class="register-title">Create Account</h1>
+            <p class="register-subtitle">Join our campus community today</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+        
+        <div class="register-body">
+            <form method="POST">
+                <!-- Step 1: Basic Info -->
+                <div class="form-step">
+                    <h3 class="step-title">
+                        <i class="fas fa-user"></i> Basic Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-item">
+                            <label for="student_id" class="form-label">Student ID *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="student_id" 
+                                   name="student_id"
+                                   placeholder="e.g., 58123456"
+                                   required
+                                   pattern="58\d{6}"
+                                   title="Must be 8 digits starting with 58">
+                            <small class="text-muted">Must be 8 digits starting with 58</small>
+                        </div>
+                        <div class="form-item">
+                            <label for="password" class="form-label">Password *</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="password" 
+                                   name="password"
+                                   placeholder="At least 6 characters"
+                                   required
+                                   minlength="6">
+                        </div>
+                        <div class="form-item">
+                            <label for="confirm_password" class="form-label">Confirm Password *</label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="confirm_password" 
+                                   name="confirm_password"
+                                   placeholder="Confirm your password"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Personal Info -->
+                <div class="form-step">
+                    <h3 class="step-title">
+                        <i class="fas fa-info-circle"></i> Personal Information
+                    </h3>
+                    <div class="form-grid">
+                        <div class="form-item">
+                            <label for="name" class="form-label">Full Name *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name"
+                                   placeholder="Your real name"
+                                   required>
+                        </div>
+                        <div class="form-item">
+                            <label for="nickname" class="form-label">Nickname</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nickname" 
+                                   name="nickname"
+                                   placeholder="Your display name">
+                        </div>
+                        <div class="form-item">
+                            <label for="gender" class="form-label">Gender *</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="X">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="college" class="form-label">College *</label>
+                            <select class="form-select" id="college" name="college" required>
+                                <option value="">Select College</option>
+                                <option value="College of Business">College of Business</option>
+                                <option value="College of Liberal Arts and Social Sciences">College of Liberal Arts and Social Sciences</option>
+                                <option value="College of Science">College of Science</option>
+                                <option value="College of Engineering">College of Engineering</option>
+                                <option value="College of Veterinary Medicine and Life Sciences">College of Veterinary Medicine and Life Sciences</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="year_of_study" class="form-label">Year of Study *</label>
+                            <select class="form-select" id="year_of_study" name="year_of_study" required>
+                                <option value="">Select Year</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                                <option value="5">5th Year</option>
+                                <option value="6">6th Year</option>
+                            </select>
+                        </div>
+                        <div class="form-item">
+                            <label for="major" class="form-label">Major *</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="major" 
+                                   name="major"
+                                   placeholder="Your major"
+                                   required>
+                        </div>
+                        <div class="form-item">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email"
+                                   placeholder="student@my.cityu.edu.hk"
+                                   required>
+                        </div>
+                        <div class="form-item">
+                            <label for="wechat_id" class="form-label">WeChat ID</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="wechat_id" 
+                                   name="wechat_id"
+                                   placeholder="Your WeChat ID">
+                        </div>
+                        <div class="form-item">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea class="form-control" 
+                                      id="bio" 
+                                      name="bio" 
+                                      rows="3"
+                                      placeholder="Tell us about yourself..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Interests -->
+                <div class="form-step">
+                    <h3 class="step-title">
+                        <i class="fas fa-heart"></i> Select Your Interests
+                    </h3>
+                    <p class="text-muted mb-3">Choose interests that represent you (select at least 3)</p>
+                    
+                    {% set grouped_tags = all_tags | groupby('category') %}
+                    {% for category_group in grouped_tags %}
+                    <div class="interest-section">
+                        <div class="category-title">
+                            <i class="fas fa-tag"></i> {{ category_group.grouper }}
+                        </div>
+                        <div class="interest-grid">
+                            {% for tag in category_group.list %}
+                            <label class="interest-checkbox">
+                                <input type="checkbox" 
+                                       name="interests" 
+                                       value="{{ tag.tag_id }}">
+                                <span>{{ tag.tag_name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </button>
+                    <a href="{{ url_for('login.login_form') }}" 
+                       class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

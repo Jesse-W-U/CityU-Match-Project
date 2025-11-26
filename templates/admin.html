@@ -1,0 +1,92 @@
+<!-- templates/admin.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📊 Admin Dashboard</h2>
+    <span class="badge bg-warning text-dark">Logged in as: {{ current_admin }}</span>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h6>Total Students</h6>
+                <p class="display-6 mb-0">{{ stats.total_students }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <h6>Admin Accounts</h6>
+                <p class="display-6 mb-0">{{ stats.total_admins }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h6>Successful Matches</h6>
+                <p class="display-6 mb-0">{{ stats.total_matches }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h6>Match Rate</h6>
+                <p class="display-6 mb-0">
+                    {% if stats.total_students > 0 %}
+                        {{ (stats.total_matches * 100 / stats.total_students)|round(1) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Top 5 Interests</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for tag in stats.top_tags %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>{{ loop.index }}. {{ tag[0] }}</span>
+                    <span class="badge bg-primary">{{ tag[1] }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Recently Active Students</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for user in stats.recent_users %}
+                <li class="list-group-item">
+                    <strong>{{ user[0] }}</strong> - {{ user[1] }}
+                    <br><small class="text-muted">{{ user[2].strftime('%Y-%m-%d %H:%M') }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- 移除 "Recent Logins" 部分 -->
+
+<div class="mt-4">
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">
+        🔒 Logout
+    </a>
+</div>
+{% endblock %}

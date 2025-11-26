@@ -1,0 +1,364 @@
+<!-- templates/profile.html -->
+{% extends "user_base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .profile-container {
+        min-height: 100vh;
+        padding-top: 60px; /* 为导航栏留出空间 */
+        padding-bottom: 2rem;
+        box-sizing: border-box;
+        background: var(--white);
+    }
+    
+    .profile-card {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin: 0 auto;
+        max-width: 1200px;
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, var(--red-1) 0%, var(--red-2) 100%);
+        padding: 2rem;
+        text-align: center;
+        color: var(--white);
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        background: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        font-size: 2.5rem;
+        color: var(--red-2);
+        font-weight: bold;
+    }
+    
+    .profile-name {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .profile-nickname {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0;
+        font-weight: 300;
+    }
+    
+    .profile-info {
+        padding: 2rem;
+    }
+    
+    .info-section {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: var(--gray-bg);
+        border-left: 4px solid var(--red-2);
+    }
+    
+    .info-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .info-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        display: inline-block;
+        min-width: 100px;
+    }
+    
+    .info-value {
+        color: var(--text-light);
+        font-weight: 300;
+    }
+    
+    .interests-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .interest-badge {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .bio-content {
+        line-height: 1.6;
+        color: var(--text-light);
+    }
+    
+    .gender-icon {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+    
+    .male-icon { color: #0d6efd; }
+    .female-icon { color: #d63384; }
+    .other-icon { color: #6c757d; }
+    
+    .tag-icons {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .tag-icon {
+        background: var(--white);
+        color: var(--red-2);
+        padding: 0.25rem 0.5rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid var(--red-2);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .tag-icon i {
+        font-size: 0.8rem;
+    }
+</style>
+
+<div class="profile-container">
+    <!-- 个人信息卡片 -->
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ student.name[0] }}
+            </div>
+            <h1 class="profile-name">{{ student.name }}</h1>
+            <p class="profile-nickname">@{{ student.nickname or 'N/A' }}</p>
+        </div>
+        
+        <div class="profile-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Personal Info -->
+                    <div class="info-section">
+                        <h3 class="info-title">
+                            <i class="fas fa-user"></i> Personal Information
+                        </h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Gender:</span>
+                                <span class="info-value">
+                                    {% if student.gender == 'M' %}
+                                        <i class="fas fa-mars gender-icon male-icon"></i> Male
+                                    {% elif student.gender == 'F' %}
+                                        <i class="fas fa-venus gender-icon female-icon"></i> Female
+                                    {% else %}
+                                        <i class="fas fa-genderless gender-icon other-icon"></i> Other
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">College:</span>
+                                <span class="info-value">{{ student.college }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Major:</span>
+                                <span class="info-value">{{ student.major }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Year:</span>
+                                <span class="info-value">{{ student.year_of_study }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Identity:</span>
+                                <span class="info-value">{{ student.identity or 'N/A' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value">{{ student.email }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">WeChat:</span>
+                                <span class="info-value">{{ student.wechat_id or 'Not set' }}</span>
+                            </div>
+                            {% if student.birth_date %}
+                            <div class="info-item">
+                                <span class="info-label">Birth Date:</span>
+                                <span class="info-value">{{ student.birth_date.strftime('%Y-%m-%d') }}</span>
+                            </div>
+                            {% endif %}
+                            {% if student.height %}
+                            <div class="info-item">
+                                <span class="info-label">Height:</span>
+                                <span class="info-value">{{ student.height }} cm</span>
+                            </div>
+                            {% endif %}
+                            {% if student.weight %}
+                            <div class="info-item">
+                                <span class="info-label">Weight:</span>
+                                <span class="info-value">{{ "%.1f"|format(student.weight / 2) }} kg</span>
+                            </div>
+                            {% endif %}
+                            {% if student.hometown %}
+                            <div class="info-item">
+                                <span class="info-label">Hometown:</span>
+                                <span class="info-value">{{ student.hometown }}</span>
+                            </div>
+                            {% endif %}
+                            {% if student.marital_status %}
+                            <div class="info-item">
+                                <span class="info-label">Marital Status:</span>
+                                <span class="info-value">{{ student.marital_status }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Bio -->
+                    <div class="info-section">
+                        <h3 class="info-title">
+                            <i class="fas fa-quote-left"></i> About Me
+                        </h3>
+                        <p class="bio-content">{{ student.bio or 'No bio yet.' }}</p>
+                    </div>
+                    
+                    <!-- Ideal Partner -->
+                    {% if student.ideal_partner %}
+                    <div class="info-section">
+                        <h3 class="info-title">
+                            <i class="fas fa-heart"></i> Ideal Partner
+                        </h3>
+                        <p class="bio-content">{{ student.ideal_partner }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Interests by Category -->
+                    <div class="info-section">
+                        <h3 class="info-title">
+                            <i class="fas fa-tags"></i> Interests by Category
+                        </h3>
+                        
+                        <!-- MBTI -->
+                        {% set mbti_interests = interests | selectattr('category', 'equalto', 'MBTI') | list %}
+                        {% if mbti_interests %}
+                        <div class="mb-3">
+                            <h5 class="text-muted"><i class="fas fa-brain me-2"></i>MBTI Type</h5>
+                            <div class="interests-grid">
+                                {% for interest in mbti_interests %}
+                                <span class="interest-badge">{{ interest.tag_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Personality -->
+                        {% set personality_interests = interests | selectattr('category', 'equalto', 'Personality') | list %}
+                        {% if personality_interests %}
+                        <div class="mb-3">
+                            <h5 class="text-muted"><i class="fas fa-user-friends me-2"></i>Personality</h5>
+                            <div class="interests-grid">
+                                {% for interest in personality_interests %}
+                                <span class="interest-badge">{{ interest.tag_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Hobby -->
+                        {% set hobby_interests = interests | selectattr('category', 'equalto', 'Hobby') | list %}
+                        {% if hobby_interests %}
+                        <div class="mb-3">
+                            <h5 class="text-muted"><i class="fas fa-gamepad me-2"></i>Hobbies</h5>
+                            <div class="interests-grid">
+                                {% for interest in hobby_interests %}
+                                <span class="interest-badge">{{ interest.tag_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Lifestyle -->
+                        {% set lifestyle_interests = interests | selectattr('category', 'equalto', 'Lifestyle') | list %}
+                        {% if lifestyle_interests %}
+                        <div class="mb-3">
+                            <h5 class="text-muted"><i class="fas fa-home me-2"></i>Lifestyle</h5>
+                            <div class="interests-grid">
+                                {% for interest in lifestyle_interests %}
+                                <span class="interest-badge">{{ interest.tag_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Zodiac -->
+                        {% set zodiac_interests = interests | selectattr('category', 'equalto', 'Zodiac') | list %}
+                        {% if zodiac_interests %}
+                        <div class="mb-3">
+                            <h5 class="text-muted"><i class="fas fa-star me-2"></i>Zodiac</h5>
+                            <div class="interests-grid">
+                                {% for interest in zodiac_interests %}
+                                <span class="interest-badge">{{ interest.tag_name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if not interests %}
+                        <span class="text-muted">No interests added yet.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

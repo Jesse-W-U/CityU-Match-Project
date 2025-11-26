@@ -1,0 +1,128 @@
+tag_id,tag_name,category,is_active,created_at
+1,ISTJ,MBTI,1,2024-09-01 10:00:00
+2,ISFJ,MBTI,1,2024-09-01 10:00:00
+3,INFJ,MBTI,1,2024-09-01 10:00:00
+4,INTJ,MBTI,1,2024-09-01 10:00:00
+5,ISTP,MBTI,1,2024-09-01 10:00:00
+6,ISFP,MBTI,1,2024-09-01 10:00:00
+7,INFP,MBTI,1,2024-09-01 10:00:00
+8,INTP,MBTI,1,2024-09-01 10:00:00
+9,ESTP,MBTI,1,2024-09-01 10:00:00
+10,ESFP,MBTI,1,2024-09-01 10:00:00
+11,ENFP,MBTI,1,2024-09-01 10:00:00
+12,ENTP,MBTI,1,2024-09-01 10:00:00
+13,ESTJ,MBTI,1,2024-09-01 10:00:00
+14,ESFJ,MBTI,1,2024-09-01 10:00:00
+15,ENFJ,MBTI,1,2024-09-01 10:00:00
+16,ENTJ,MBTI,1,2024-09-01 10:00:00
+17,Cold Outside Warm Inside,Personality,1,2024-09-01 10:00:00
+18,Quiet,Personality,1,2024-09-01 10:00:00
+19,Refined and Reserved,Personality,1,2024-09-01 10:00:00
+20,Gentle,Personality,1,2024-09-01 10:00:00
+21,Introverted but Playful,Personality,1,2024-09-01 10:00:00
+22,Caring,Personality,1,2024-09-01 10:00:00
+23,Detail-Oriented,Personality,1,2024-09-01 10:00:00
+24,Well-Mannered,Personality,1,2024-09-01 10:00:00
+25,Straightforward,Personality,1,2024-09-01 10:00:00
+26,Egalitarian,Personality,1,2024-09-01 10:00:00
+27,Slow to Warm Up,Personality,1,2024-09-01 10:00:00
+28,Social Butterfly,Personality,1,2024-09-01 10:00:00
+29,Outgoing and Positive,Personality,1,2024-09-01 10:00:00
+30,Independent,Personality,1,2024-09-01 10:00:00
+31,Prideful,Personality,1,2024-09-01 10:00:00
+32,Likes Being Taken Care Of,Personality,1,2024-09-01 10:00:00
+33,Perfectionist,Personality,1,2024-09-01 10:00:00
+34,Understanding,Personality,1,2024-09-01 10:00:00
+35,Witty,Personality,1,2024-09-01 10:00:00
+36,Well-Behaved,Personality,1,2024-09-01 10:00:00
+37,Hardworking,Personality,1,2024-09-01 10:00:00
+38,Warm-hearted,Personality,1,2024-09-01 10:00:00
+39,Kind and Caring,Personality,1,2024-09-01 10:00:00
+40,Sensitive,Personality,1,2024-09-01 10:00:00
+41,Open and Straightforward,Personality,1,2024-09-01 10:00:00
+42,Sincere and Reliable,Personality,1,2024-09-01 10:00:00
+43,Modest and Disciplined,Personality,1,2024-09-01 10:00:00
+44,Optimistic and Confident,Personality,1,2024-09-01 10:00:00
+45,Meticulous,Personality,1,2024-09-01 10:00:00
+46,Mature and Steady,Personality,1,2024-09-01 10:00:00
+47,Gaming,Hobby,1,2024-09-01 10:00:00
+48,Mobile Gaming,Hobby,1,2024-09-01 10:00:00
+49,Anime,Hobby,1,2024-09-01 10:00:00
+50,Traveling,Hobby,1,2024-09-01 10:00:00
+51,Karaoke,Hobby,1,2024-09-01 10:00:00
+52,Voice Appreciation,Hobby,1,2024-09-01 10:00:00
+53,Muscle Enthusiast,Hobby,1,2024-09-01 10:00:00
+54,Photography,Hobby,1,2024-09-01 10:00:00
+55,Musical Instruments,Hobby,1,2024-09-01 10:00:00
+56,PC Gaming,Hobby,1,2024-09-01 10:00:00
+57,Delicious Food,Hobby,1,2024-09-01 10:00:00
+58,Attractive Appearance Fan,Hobby,1,2024-09-01 10:00:00
+59,Height Preference,Hobby,1,2024-09-01 10:00:00
+60,Digital Gadgets,Hobby,1,2024-09-01 10:00:00
+61,Drone Photography,Hobby,1,2024-09-01 10:00:00
+62,Fitness,Hobby,1,2024-09-01 10:00:00
+63,Sports,Hobby,1,2024-09-01 10:00:00
+64,Watching Movies,Hobby,1,2024-09-01 10:00:00
+65,Reading,Hobby,1,2024-09-01 10:00:00
+66,Watching TV Shows,Hobby,1,2024-09-01 10:00:00
+67,Live Streaming,Hobby,1,2024-09-01 10:00:00
+68,Cat Lovers,Hobby,1,2024-09-01 10:00:00
+69,Dog Lovers,Hobby,1,2024-09-01 10:00:00
+70,Music,Hobby,1,2024-09-01 10:00:00
+71,Novels,Hobby,1,2024-09-01 10:00:00
+72,Adventure,Hobby,1,2024-09-01 10:00:00
+73,Outdoor Activities,Hobby,1,2024-09-01 10:00:00
+74,Art,Hobby,1,2024-09-01 10:00:00
+75,Puzzles,Hobby,1,2024-09-01 10:00:00
+76,Calligraphy,Hobby,1,2024-09-01 10:00:00
+77,Painting,Hobby,1,2024-09-01 10:00:00
+78,Cooking,Hobby,1,2024-09-01 10:00:00
+79,Military,Hobby,1,2024-09-01 10:00:00
+80,Writing,Hobby,1,2024-09-01 10:00:00
+81,Programming,Hobby,1,2024-09-01 10:00:00
+82,Road Trips,Hobby,1,2024-09-01 10:00:00
+83,Baking,Hobby,1,2024-09-01 10:00:00
+84,Bar Hopping,Hobby,1,2024-09-01 10:00:00
+85,Shopping,Hobby,1,2024-09-01 10:00:00
+86,Early Bird,Lifestyle,1,2024-09-01 10:00:00
+87,Environmental Practitioner,Lifestyle,1,2024-09-01 10:00:00
+88,Exquisite Lifestyle,Lifestyle,1,2024-09-01 10:00:00
+89,Decluttering,Lifestyle,1,2024-09-01 10:00:00
+90,Self-Sufficient,Lifestyle,1,2024-09-01 10:00:00
+91,Slow Living,Lifestyle,1,2024-09-01 10:00:00
+92,Digital Geek,Lifestyle,1,2024-09-01 10:00:00
+93,Coffee Culture,Lifestyle,1,2024-09-01 10:00:00
+94,Food Exploration,Lifestyle,1,2024-09-01 10:00:00
+95,Healthy Diet,Lifestyle,1,2024-09-01 10:00:00
+96,Smart Home,Lifestyle,1,2024-09-01 10:00:00
+97,Home Gardening,Lifestyle,1,2024-09-01 10:00:00
+98,Urban Walking,Lifestyle,1,2024-09-01 10:00:00
+99,Book Collection,Lifestyle,1,2024-09-01 10:00:00
+100,Zero Waste,Lifestyle,1,2024-09-01 10:00:00
+101,Secondhand Market,Lifestyle,1,2024-09-01 10:00:00
+102,Car Enthusiast,Lifestyle,1,2024-09-01 10:00:00
+103,Cat Owner,Lifestyle,1,2024-09-01 10:00:00
+104,Dog Owner,Lifestyle,1,2024-09-01 10:00:00
+105,Photography Hobby,Lifestyle,1,2024-09-01 10:00:00
+106,Community Volunteer,Lifestyle,1,2024-09-01 10:00:00
+107,Food Fermentation,Lifestyle,1,2024-09-01 10:00:00
+108,LOHAS,Lifestyle,1,2024-09-01 10:00:00
+109,Nature Travel,Lifestyle,1,2024-09-01 10:00:00
+110,Regular Digital Detox,Lifestyle,1,2024-09-01 10:00:00
+111,Market Regular,Lifestyle,1,2024-09-01 10:00:00
+112,Home Decoration,Lifestyle,1,2024-09-01 10:00:00
+113,Experience Seeker,Lifestyle,1,2024-09-01 10:00:00
+114,Minimalism,Lifestyle,1,2024-09-01 10:00:00
+115,Reading Time,Lifestyle,1,2024-09-01 10:00:00
+116,Aries,Zodiac,1,2024-09-01 10:00:00
+117,Taurus,Zodiac,1,2024-09-01 10:00:00
+118,Gemini,Zodiac,1,2024-09-01 10:00:00
+119,Cancer,Zodiac,1,2024-09-01 10:00:00
+120,Leo,Zodiac,1,2024-09-01 10:00:00
+121,Virgo,Zodiac,1,2024-09-01 10:00:00
+122,Libra,Zodiac,1,2024-09-01 10:00:00
+123,Scorpio,Zodiac,1,2024-09-01 10:00:00
+124,Sagittarius,Zodiac,1,2024-09-01 10:00:00
+125,Capricorn,Zodiac,1,2024-09-01 10:00:00
+126,Aquarius,Zodiac,1,2024-09-01 10:00:00
+127,Pisces,Zodiac,1,2024-09-01 10:00:00

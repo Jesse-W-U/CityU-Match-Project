@@ -1,0 +1,521 @@
+<!-- templates/matching/search.html -->
+{% extends "user_base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .search-container {
+        min-height: 100vh;
+        padding-top: 60px; /* 为导航栏留出空间 */
+        padding-bottom: 2rem;
+        box-sizing: border-box;
+        background: var(--white);
+    }
+    
+    .filter-section {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 2px solid var(--border-color);
+    }
+    
+    .filter-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .filter-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .filter-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+        display: block;
+        font-size: 0.875rem;
+    }
+    
+    .filter-control {
+        width: 100%;
+        padding: 0.5rem;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    
+    .filter-control:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .search-btn {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        color: var(--white);
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .search-btn:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(194, 0, 65, 0.3);
+    }
+    
+    .results-section {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border: 2px solid var(--border-color);
+    }
+    
+    .results-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .results-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1.5rem;
+        gap: 0.5rem;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 0.25rem 0.5rem;
+        text-decoration: none;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-dark);
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+    }
+    
+    .pagination a:hover {
+        background: var(--gray-bg);
+        border-color: var(--red-2);
+    }
+    
+    .pagination .active {
+        background: var(--red-2);
+        color: white;
+        border-color: var(--red-2);
+    }
+    
+    .student-row {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        background: var(--gray-bg);
+        border-radius: 12px;
+        border-left: 4px solid var(--red-2);
+        transition: all 0.2s ease;
+    }
+    
+    .student-row:hover {
+        background: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        color: var(--white);
+        font-weight: bold;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+    }
+    
+    .student-info {
+        flex: 1;
+    }
+    
+    .student-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0 0 0.25rem 0;
+    }
+    
+    .student-nickname {
+        font-size: 0.875rem;
+        color: var(--red-2);
+        font-weight: 500;
+        margin: 0 0 0.25rem 0;
+    }
+    
+    .student-details {
+        font-size: 0.75rem;
+        color: var(--text-light);
+        margin: 0;
+    }
+    
+    .student-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin: 0.25rem 0;
+    }
+    
+    .tag-badge {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .student-actions {
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+    
+    .action-btn {
+        padding: 0.25rem 0.5rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-left: 0.25rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        color: var(--white) !important;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline {
+        background: transparent;
+        color: var(--red-2);
+        border: 2px solid var(--red-2);
+    }
+    
+    .btn-outline:hover {
+        background: var(--red-2);
+        color: var(--white);
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-light);
+    }
+    
+    .no-results i {
+        font-size: 2rem;
+        color: var(--red-2);
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="search-container">
+    <!-- 筛选器区域 -->
+    <div class="filter-section">
+        <h3 class="filter-title">
+            <i class="fas fa-filter"></i> Search Filters
+        </h3>
+        <form method="GET">
+            <!-- 第一行：学院、身份、年龄 -->
+            <div class="filter-row">
+                <div class="filter-item">
+                    <label class="filter-label">College</label>
+                    <select class="filter-control" name="college">
+                        <option value="">All Colleges</option>
+                        <option value="College of Engineering" {% if filters.college == 'College of Engineering' %}selected{% endif %}>College of Engineering</option>
+                        <option value="College of Business" {% if filters.college == 'College of Business' %}selected{% endif %}>College of Business</option>
+                        <option value="College of Science" {% if filters.college == 'College of Science' %}selected{% endif %}>College of Science</option>
+                        <option value="College of Liberal Arts and Social Sciences" {% if filters.college == 'College of Liberal Arts and Social Sciences' %}selected{% endif %}>College of Liberal Arts and Social Sciences</option>
+                        <option value="College of Veterinary Medicine and Life Sciences" {% if filters.college == 'College of Veterinary Medicine and Life Sciences' %}selected{% endif %}>College of Veterinary Medicine and Life Sciences</option>
+                    </select>
+                </div>
+                
+                <div class="filter-item">
+                    <label class="filter-label">Identity</label>
+                    <select class="filter-control" name="identity">
+                        <option value="">All Identities</option>
+                        <option value="Undergraduate" {% if filters.identity == 'Undergraduate' %}selected{% endif %}>Undergraduate</option>
+                        <option value="Graduate" {% if filters.identity == 'Graduate' %}selected{% endif %}>Graduate</option>
+                        <option value="PhD" {% if filters.identity == 'PhD' %}selected{% endif %}>PhD</option>
+                    </select>
+                </div>
+                
+                <div class="filter-item">
+                    <label class="filter-label">Age Range</label>
+                    <div class="row">
+                        <div class="col-6 pe-1">
+                            <input type="number" class="filter-control" name="age_min" placeholder="Min" value="{{ filters.age_min or '' }}">
+                        </div>
+                        <div class="col-6 ps-1">
+                            <input type="number" class="filter-control" name="age_max" placeholder="Max" value="{{ filters.age_max or '' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 第二行：专业、家乡、MBTI -->
+            <div class="filter-row">
+                <div class="filter-item">
+                    <label class="filter-label">Major</label>
+                    <select class="filter-control" name="major">
+                        <option value="">All Majors</option>
+                        <option value="Accounting" {% if filters.major == 'Accounting' %}selected{% endif %}>Accounting</option>
+                        <option value="Finance" {% if filters.major == 'Finance' %}selected{% endif %}>Finance</option>
+                        <option value="Marketing" {% if filters.major == 'Marketing' %}selected{% endif %}>Marketing</option>
+                        <option value="Management" {% if filters.major == 'Management' %}selected{% endif %}>Management</option>
+                        <option value="Computer Science" {% if filters.major == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+                        <option value="Electronic Engineering" {% if filters.major == 'Electronic Engineering' %}selected{% endif %}>Electronic Engineering</option>
+                        <option value="Mechanical Engineering" {% if filters.major == 'Mechanical Engineering' %}selected{% endif %}>Mechanical Engineering</option>
+                        <option value="Biomedical Engineering" {% if filters.major == 'Biomedical Engineering' %}selected{% endif %}>Biomedical Engineering</option>
+                        <option value="Mathematics" {% if filters.major == 'Mathematics' %}selected{% endif %}>Mathematics</option>
+                        <option value="Physics" {% if filters.major == 'Physics' %}selected{% endif %}>Physics</option>
+                        <option value="Chemistry" {% if filters.major == 'Chemistry' %}selected{% endif %}>Chemistry</option>
+                        <option value="Biology" {% if filters.major == 'Biology' %}selected{% endif %}>Biology</option>
+                        <option value="Media and Communication" {% if filters.major == 'Media and Communication' %}selected{% endif %}>Media and Communication</option>
+                        <option value="Psychology" {% if filters.major == 'Psychology' %}selected{% endif %}>Psychology</option>
+                        <option value="Economics" {% if filters.major == 'Economics' %}selected{% endif %}>Economics</option>
+                        <option value="English" {% if filters.major == 'English' %}selected{% endif %}>English</option>
+                        <option value="Veterinary Medicine" {% if filters.major == 'Veterinary Medicine' %}selected{% endif %}>Veterinary Medicine</option>
+                        <option value="Biomedical Sciences" {% if filters.major == 'Biomedical Sciences' %}selected{% endif %}>Biomedical Sciences</option>
+                        <option value="Other" {% if filters.major == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                
+                <div class="filter-item">
+                    <label class="filter-label">Hometown</label>
+                    <select class="filter-control" name="hometown">
+                        <option value="">All Hometowns</option>
+                        <option value="Beijing" {% if filters.hometown == 'Beijing' %}selected{% endif %}>Beijing</option>
+                        <option value="Shanghai" {% if filters.hometown == 'Shanghai' %}selected{% endif %}>Shanghai</option>
+                        <option value="Guangdong" {% if filters.hometown == 'Guangdong' %}selected{% endif %}>Guangdong</option>
+                        <option value="Zhejiang" {% if filters.hometown == 'Zhejiang' %}selected{% endif %}>Zhejiang</option>
+                        <option value="Jiangsu" {% if filters.hometown == 'Jiangsu' %}selected{% endif %}>Jiangsu</option>
+                        <option value="Sichuan" {% if filters.hometown == 'Sichuan' %}selected{% endif %}>Sichuan</option>
+                        <option value="Hubei" {% if filters.hometown == 'Hubei' %}selected{% endif %}>Hubei</option>
+                        <option value="Hunan" {% if filters.hometown == 'Hunan' %}selected{% endif %}>Hunan</option>
+                        <option value="Anhui" {% if filters.hometown == 'Anhui' %}selected{% endif %}>Anhui</option>
+                        <option value="Fujian" {% if filters.hometown == 'Fujian' %}selected{% endif %}>Fujian</option>
+                        <option value="Shandong" {% if filters.hometown == 'Shandong' %}selected{% endif %}>Shandong</option>
+                        <option value="Henan" {% if filters.hometown == 'Henan' %}selected{% endif %}>Henan</option>
+                        <option value="Hebei" {% if filters.hometown == 'Hebei' %}selected{% endif %}>Hebei</option>
+                        <option value="Shaanxi" {% if filters.hometown == 'Shaanxi' %}selected{% endif %}>Shaanxi</option>
+                        <option value="Liaoning" {% if filters.hometown == 'Liaoning' %}selected{% endif %}>Liaoning</option>
+                        <option value="Jilin" {% if filters.hometown == 'Jilin' %}selected{% endif %}>Jilin</option>
+                        <option value="Heilongjiang" {% if filters.hometown == 'Heilongjiang' %}selected{% endif %}>Heilongjiang</option>
+                        <option value="Tianjin" {% if filters.hometown == 'Tianjin' %}selected{% endif %}>Tianjin</option>
+                        <option value="Chongqing" {% if filters.hometown == 'Chongqing' %}selected{% endif %}>Chongqing</option>
+                        <option value="Jiangxi" {% if filters.hometown == 'Jiangxi' %}selected{% endif %}>Jiangxi</option>
+                        <option value="Guizhou" {% if filters.hometown == 'Guizhou' %}selected{% endif %}>Guizhou</option>
+                        <option value="Yunnan" {% if filters.hometown == 'Yunnan' %}selected{% endif %}>Yunnan</option>
+                        <option value="Shanxi" {% if filters.hometown == 'Shanxi' %}selected{% endif %}>Shanxi</option>
+                        <option value="Gansu" {% if filters.hometown == 'Gansu' %}selected{% endif %}>Gansu</option>
+                        <option value="Qinghai" {% if filters.hometown == 'Qinghai' %}selected{% endif %}>Qinghai</option>
+                        <option value="Hainan" {% if filters.hometown == 'Hainan' %}selected{% endif %}>Hainan</option>
+                        <option value="Inner Mongolia" {% if filters.hometown == 'Inner Mongolia' %}selected{% endif %}>Inner Mongolia</option>
+                        <option value="Guangxi" {% if filters.hometown == 'Guangxi' %}selected{% endif %}>Guangxi</option>
+                        <option value="Ningxia" {% if filters.hometown == 'Ningxia' %}selected{% endif %}>Ningxia</option>
+                        <option value="Xinjiang" {% if filters.hometown == 'Xinjiang' %}selected{% endif %}>Xinjiang</option>
+                        <option value="Tibet" {% if filters.hometown == 'Tibet' %}selected{% endif %}>Tibet</option>
+                        <option value="Hong Kong" {% if filters.hometown == 'Hong Kong' %}selected{% endif %}>Hong Kong</option>
+                        <option value="Macao" {% if filters.hometown == 'Macao' %}selected{% endif %}>Macao</option>
+                    </select>
+                </div>
+                
+                <div class="filter-item">
+                    <label class="filter-label">MBTI</label>
+                    <select class="filter-control" name="mbti">
+                        <option value="">All MBTI Types</option>
+                        <option value="ISTJ" {% if filters.mbti == 'ISTJ' %}selected{% endif %}>ISTJ</option>
+                        <option value="ISFJ" {% if filters.mbti == 'ISFJ' %}selected{% endif %}>ISFJ</option>
+                        <option value="INFJ" {% if filters.mbti == 'INFJ' %}selected{% endif %}>INFJ</option>
+                        <option value="INTJ" {% if filters.mbti == 'INTJ' %}selected{% endif %}>INTJ</option>
+                        <option value="ISTP" {% if filters.mbti == 'ISTP' %}selected{% endif %}>ISTP</option>
+                        <option value="ISFP" {% if filters.mbti == 'ISFP' %}selected{% endif %}>ISFP</option>
+                        <option value="INFP" {% if filters.mbti == 'INFP' %}selected{% endif %}>INFP</option>
+                        <option value="INTP" {% if filters.mbti == 'INTP' %}selected{% endif %}>INTP</option>
+                        <option value="ESTP" {% if filters.mbti == 'ESTP' %}selected{% endif %}>ESTP</option>
+                        <option value="ESFP" {% if filters.mbti == 'ESFP' %}selected{% endif %}>ESFP</option>
+                        <option value="ENFP" {% if filters.mbti == 'ENFP' %}selected{% endif %}>ENFP</option>
+                        <option value="ENTP" {% if filters.mbti == 'ENTP' %}selected{% endif %}>ENTP</option>
+                        <option value="ESTJ" {% if filters.mbti == 'ESTJ' %}selected{% endif %}>ESTJ</option>
+                        <option value="ESFJ" {% if filters.mbti == 'ESFJ' %}selected{% endif %}>ESFJ</option>
+                        <option value="ENFJ" {% if filters.mbti == 'ENFJ' %}selected{% endif %}>ENFJ</option>
+                        <option value="ENTJ" {% if filters.mbti == 'ENTJ' %}selected{% endif %}>ENTJ</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="search-btn">
+                <i class="fas fa-search me-1"></i>Search Matches
+            </button>
+        </form>
+    </div>
+    
+    <!-- 结果展示区域 -->
+    <div class="results-section">
+        <h3 class="results-title">
+            <i class="fas fa-users"></i> Search Results ({{ pagination.total_count }} found)
+        </h3>
+        
+        {% if students %}
+            {% for student in students %}
+            <div class="student-row">
+                <div class="student-avatar">
+                    {{ student.name[0] }}
+                </div>
+                <div class="student-info">
+                    <h4 class="student-name">{{ student.name }}</h4>
+                    <p class="student-nickname">@{{ student.nickname or 'N/A' }}</p>
+                    <p class="student-details">{{ student.college }} • Year {{ student.year_of_study }} • {{ student.major }}</p>
+                    {% if student.bio %}
+                    <p class="student-details"><i class="fas fa-quote-left me-1"></i>{{ student.bio }}</p>
+                    {% endif %}
+                    <div class="student-tags">
+                        <!-- 这里需要获取兴趣标签，暂时显示占位符 -->
+                        {% for interest in [] %}
+                        <span class="tag-badge">{{ interest.tag_name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- 在学生行的操作按钮部分 -->
+                <div class="student-actions">
+                    <a href="{{ url_for('matching.student_detail', student_id=student.student_id) }}" class="action-btn btn-primary">
+                        <i class="fas fa-eye"></i> View Profile
+                    </a>
+                    
+                    <!-- 发送邀约表单 -->
+                    <form method="POST" action="{{ url_for('matching.send_invitation_to', target_id=student.student_id) }}" style="display: inline;">
+                        <button type="submit" class="action-btn btn-outline">
+                            <i class="fas fa-paper-plane"></i> Invite
+                        </button>
+                    </form>
+                    
+                    <!-- 点赞表单 -->
+                    {% set like_status = get_like_status(session.user_id, student.student_id) %}
+                    <form method="POST" action="{{ url_for('matching.like_student', target_id=student.student_id) }}" style="display: inline;">
+                        {% if like_status == 'liked' %}
+                        <button type="submit" class="action-btn btn-outline" style="background: #28a745; color: white;">
+                            <i class="fas fa-heart"></i> Liked
+                        </button>
+                        {% else %}
+                        <button type="submit" class="action-btn btn-outline">
+                            <i class="fas fa-heart"></i> Like
+                        </button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- 分页 -->
+            {% if pagination.total_pages > 1 %}
+            <div class="pagination">
+                {% if pagination.has_prev %}
+                <a href="{{ url_for('matching.search_matches', page=pagination.page-1, **filters) }}">Previous</a>
+                {% endif %}
+                
+                <!-- 只显示当前页前后2页 -->
+                {% set start_page = [1, pagination.page-2] | max %}
+                {% set end_page = [pagination.total_pages, pagination.page+2] | min %}
+                
+                {% if start_page > 1 %}
+                <a href="{{ url_for('matching.search_matches', page=1, **filters) }}">1</a>
+                {% if start_page > 2 %}
+                <span>...</span>
+                {% endif %}
+                {% endif %}
+                
+                {% for p in range(start_page, end_page + 1) %}
+                {% if p == pagination.page %}
+                <span class="active">{{ p }}</span>
+                {% else %}
+                <a href="{{ url_for('matching.search_matches', page=p, **filters) }}">{{ p }}</a>
+                {% endif %}
+                {% endfor %}
+                
+                {% if end_page < pagination.total_pages %}
+                {% if end_page < pagination.total_pages - 1 %}
+                <span>...</span>
+                {% endif %}
+                <a href="{{ url_for('matching.search_matches', page=pagination.total_pages, **filters) }}">{{ pagination.total_pages }}</a>
+                {% endif %}
+                
+                {% if pagination.has_next %}
+                <a href="{{ url_for('matching.search_matches', page=pagination.page+1, **filters) }}">Next</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h4>No Matches Found</h4>
+            <p class="text-muted">Try adjusting your search criteria to find more matches!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

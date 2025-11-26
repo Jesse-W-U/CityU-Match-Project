@@ -1,0 +1,244 @@
+<!-- templates/admin/tags.html -->
+{% extends "admin/base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .section-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .filter-section {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-select, .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .form-select:focus, .form-control:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .table th {
+        background: var(--gray-bg);
+        color: var(--text-dark);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    
+    .table td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background: var(--gray-bg);
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .badge-mbti { background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%); color: white; }
+    .badge-personality { background: #0d6efd; color: white; }
+    .badge-hobby { background: #198754; color: white; }
+    .badge-lifestyle { background: #fd7e14; color: white; }
+    .badge-zodiac { background: #6f42c1; color: white; }
+    .badge-active { background: #d4edda; color: #155724; }
+    .badge-inactive { background: #f8d7da; color: #721c24; }
+    
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-right: 0.25rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        color: white !important;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+    }
+    
+    .btn-outline-secondary {
+        border-color: var(--border-color);
+        color: var(--text-dark);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-bg);
+        border-color: var(--gray-bg);
+    }
+    
+    .use-count {
+        background: var(--gray-bg);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title">
+        <i class="fas fa-tags"></i> Interest Tags Management
+    </h2>
+    <!-- 移除了 "Add New Tag" 按钮 -->
+</div>
+
+<!-- 筛选器 -->
+<div class="filter-section">
+    <form method="GET">
+        <div class="row align-items-end">
+            <div class="col-md-4">
+                <label for="category" class="form-label">Filter by Category</label>
+                <select class="form-select" id="category" name="category">
+                    <option value="">All Categories</option>
+                    <option value="MBTI" {% if category_filter == 'MBTI' %}selected{% endif %}>MBTI</option>
+                    <option value="Personality" {% if category_filter == 'Personality' %}selected{% endif %}>Personality</option>
+                    <option value="Hobby" {% if category_filter == 'Hobby' %}selected{% endif %}>Hobby</option>
+                    <option value="Lifestyle" {% if category_filter == 'Lifestyle' %}selected{% endif %}>Lifestyle</option>
+                    <option value="Zodiac" {% if category_filter == 'Zodiac' %}selected{% endif %}>Zodiac</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="status" class="form-label">Filter by Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">All Status</option>
+                    <option value="1" {% if status_filter == '1' %}selected{% endif %}>Active</option>
+                    <option value="0" {% if status_filter == '0' %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter me-2"></i>Apply Filter
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 标签表格 -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Tag Name</th>
+                    <th>Category</th>
+                    <th>Use Count</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tag in tags %}
+                <tr>
+                    <td>{{ tag[1] }}</td>  <!-- tag_name -->
+                    <td>
+                        {% if tag[2] == 'MBTI' %}
+                        <span class="badge badge-mbti">{{ tag[2] }}</span>
+                        {% elif tag[2] == 'Personality' %}
+                        <span class="badge badge-personality">{{ tag[2] }}</span>
+                        {% elif tag[2] == 'Hobby' %}
+                        <span class="badge badge-hobby">{{ tag[2] }}</span>
+                        {% elif tag[2] == 'Lifestyle' %}
+                        <span class="badge badge-lifestyle">{{ tag[2] }}</span>
+                        {% elif tag[2] == 'Zodiac' %}
+                        <span class="badge badge-zodiac">{{ tag[2] }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ tag[2] }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="use-count">{{ tag[5] }}</span>  <!-- use_count -->
+                    </td>
+                    <td>
+                        {% if tag[3] %}
+                        <span class="badge badge-active">Active</span>
+                        {% else %}
+                        <span class="badge badge-inactive">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ tag[4].strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <!-- 移除了 Edit 按钮 -->
+                        <form method="POST" action="{{ url_for('admin.toggle_tag_status', tag_id=tag[0]) }}" style="display: inline;">
+                            {% if tag[3] %}
+                            <button type="submit" class="action-btn btn-outline-secondary" onclick="return confirm('Are you sure you want to disable this tag?')">
+                                <i class="fas fa-ban"></i> Disable
+                            </button>
+                            {% else %}
+                            <button type="submit" class="action-btn btn-outline-secondary" onclick="return confirm('Are you sure you want to enable this tag?')">
+                                <i class="fas fa-check-circle"></i> Enable
+                            </button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 移除了整个添加标签模态框和相关JavaScript -->
+{% endblock %}

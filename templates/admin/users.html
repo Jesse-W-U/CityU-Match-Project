@@ -1,0 +1,239 @@
+<!-- templates/admin/users.html -->
+{% extends "admin/base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .section-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+    }
+    
+    .table th {
+        background: var(--gray-bg);
+        color: var(--text-dark);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    
+    .table td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background: var(--gray-bg);
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .badge-student {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        color: white;
+    }
+    
+    .badge-admin {
+        background: #ffc107;
+        color: #856404;
+    }
+    
+    .badge-active {
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .badge-inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-right: 0.25rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        color: white !important;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+    }
+    
+    .btn-outline-secondary {
+        border-color: var(--border-color);
+        color: var(--text-dark);
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-bg);
+        border-color: var(--gray-bg);
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .pagination a, .pagination span {
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-dark);
+        transition: all 0.2s ease;
+    }
+    
+    .pagination a:hover {
+        background: var(--gray-bg);
+        border-color: var(--red-2);
+    }
+    
+    .pagination .active {
+        background: var(--red-2);
+        color: white;
+        border-color: var(--red-2);
+    }
+    
+    .stats-info {
+        background: var(--gray-bg);
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="section-title">
+        <i class="fas fa-users"></i> User Management
+    </h2>
+    <div class="stats-info">
+        Showing {{ users|length }} of {{ pagination.total_count }} users
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>College</th>
+                <th>Major</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><code>{{ user[0] }}</code></td>
+                <td>{{ user[4] or user[0] }}</td>
+                <td>
+                    {% if user[1] == 'admin' %}
+                    <span class="badge badge-admin">ADMIN</span>
+                    {% else %}
+                    <span class="badge badge-student">STUDENT</span>
+                    {% endif %}
+                </td>
+                <td>{{ user[5] or 'N/A' }}</td>
+                <td>{{ user[6] or 'N/A' }}</td>
+                <td>
+                    {% if user[2] %}
+                    <span class="badge badge-active">Active</span>
+                    {% else %}
+                    <span class="badge badge-inactive">Inactive</span>
+                    {% endif %}
+                </td>
+                <td>{{ user[3].strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="{{ url_for('admin.edit_user', user_id=user[0]) }}" class="action-btn btn-outline-secondary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user[0]) }}" style="display: inline;">
+                        {% if user[2] %}
+                        <button type="submit" class="action-btn btn-outline-secondary" onclick="return confirm('Are you sure you want to deactivate this user?')">
+                            <i class="fas fa-ban"></i> Disable
+                        </button>
+                        {% else %}
+                        <button type="submit" class="action-btn btn-outline-secondary" onclick="return confirm('Are you sure you want to activate this user?')">
+                            <i class="fas fa-check-circle"></i> Activate
+                        </button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 分页 -->
+{% if pagination.total_pages > 1 %}
+<div class="pagination">
+    {% if pagination.has_prev %}
+    <a href="{{ url_for('admin.user_management', page=pagination.page-1) }}">Previous</a>
+    {% endif %}
+    
+    {% for p in range([1, pagination.page-2]|max, [pagination.total_pages, pagination.page+2]|min + 1) %}
+    {% if p == pagination.page %}
+    <span class="active">{{ p }}</span>
+    {% else %}
+    <a href="{{ url_for('admin.user_management', page=p) }}">{{ p }}</a>
+    {% endif %}
+    {% endfor %}
+    
+    {% if pagination.has_next %}
+    <a href="{{ url_for('admin.user_management', page=pagination.page+1) }}">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

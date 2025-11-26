@@ -1,0 +1,386 @@
+<!-- templates/admin/dashboard.html -->
+{% extends "admin/base.html" %}
+
+{% block admin_title %}Dashboard{% endblock %}
+{% block admin_subtitle %}System Overview{% endblock %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border-left: 4px solid var(--red-2);
+        transition: transform 0.3s ease;
+        text-align: center;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin: 0.5rem 0;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        margin: 0;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .section-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    
+    .table th {
+        background: var(--gray-bg);
+        color: var(--text-dark);
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+    }
+    
+    .table td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover tbody tr:hover {
+        background: var(--gray-bg);
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .badge-student {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        color: white;
+    }
+    
+    .badge-admin {
+        background: #ffc107;
+        color: #856404;
+    }
+    
+    .tag-badge {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-3) 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .rank-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        margin: 0.25rem 0;
+        background: var(--gray-bg);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .rank-item:hover {
+        background: white;
+        transform: translateX(5px);
+    }
+    
+    .rank-number {
+        font-weight: 600;
+        color: var(--red-2);
+        width: 30px;
+        text-align: center;
+    }
+    
+    .rank-name {
+        flex: 1;
+        margin: 0 0.5rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .rank-count {
+        background: var(--red-2);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .category-section {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        background: var(--white);
+        border: 1px solid var(--border-color);
+    }
+    
+    .category-title {
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .category-title i {
+        margin-right: 0.5rem;
+    }
+</style>
+
+<!-- 5个统计卡片在同一行 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.active_students }}</div>
+        <p class="stat-label">Active Students</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.admin_count }}</div>
+        <p class="stat-label">Admin Accounts</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total_tags }}</div>
+        <p class="stat-label">Interest Tags</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.total_invitations }}</div>
+        <p class="stat-label">Total Invitations</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-number">{{ stats.accepted_invitations }}</div>
+        <p class="stat-label">Accepted Invitations</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="section-title">
+                    <i class="fas fa-users"></i> Recent Registrations
+                </h3>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>College</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in stats.recent_users %}
+                        <tr>
+                            <td><code>{{ user[0] }}</code></td>
+                            <td>{{ user[4] or user[0] }}</td>
+                            <td>
+                                {% if user[1] == 'admin' %}
+                                <span class="badge badge-admin">ADMIN</span>
+                                {% else %}
+                                <span class="badge badge-student">STUDENT</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user[5] or 'N/A' }}</td>
+                            <td>
+                                {% if user[3] %}
+                                    {{ user[3].strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <!-- 新增：学生被点赞排名 -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="section-title">
+                    <i class="fas fa-heart"></i> Top Liked Students
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if stats.top_liked_students %}
+                    {% for student in stats.top_liked_students %}
+                    <div class="rank-item">
+                        <span class="rank-number">{{ loop.index }}</span>
+                        <span class="rank-name">{{ student[1] or student[0] }} @{{ student[2] or student[0] }}</span> <!-- name or student_id -->
+                        <span class="rank-count">{{ student[3] }}</span> <!-- like_count -->
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-heart text-muted mb-2"></i>
+                    <p class="text-muted">No students have been liked yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 在 Popular Interests 部分，修正为元组索引格式 -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="section-title">
+                    <i class="fas fa-heart"></i> Popular Interests (Categorized)
+                </h3>
+            </div>
+            <div class="card-body">
+                <!-- MBTI 类别 -->
+                {% set mbti_tags = [] %}
+                {% for tag in stats.top_tags %}
+                    {% if tag[1] == 'MBTI' %}
+                        {% set _ = mbti_tags.append(tag) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if mbti_tags %}
+                <div class="category-section">
+                    <div class="category-title">
+                        <i class="fas fa-brain"></i> MBTI
+                    </div>
+                    {% for tag in mbti_tags %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="me-2">{{ tag[0] }}</span> <!-- tag_name -->
+                        <span class="badge bg-primary">{{ tag[2] }}</span> <!-- count -->
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Personality 类别 -->
+                {% set personality_tags = [] %}
+                {% for tag in stats.top_tags %}
+                    {% if tag[1] == 'Personality' %}
+                        {% set _ = personality_tags.append(tag) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if personality_tags %}
+                <div class="category-section">
+                    <div class="category-title">
+                        <i class="fas fa-user"></i> Personality
+                    </div>
+                    {% for tag in personality_tags %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="me-2">{{ tag[0] }}</span> <!-- tag_name -->
+                        <span class="badge bg-primary">{{ tag[2] }}</span> <!-- count -->
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Hobby 类别 -->
+                {% set hobby_tags = [] %}
+                {% for tag in stats.top_tags %}
+                    {% if tag[1] == 'Hobby' %}
+                        {% set _ = hobby_tags.append(tag) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if hobby_tags %}
+                <div class="category-section">
+                    <div class="category-title">
+                        <i class="fas fa-gamepad"></i> Hobbies
+                    </div>
+                    {% for tag in hobby_tags %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="me-2">{{ tag[0] }}</span> <!-- tag_name -->
+                        <span class="badge bg-primary">{{ tag[2] }}</span> <!-- count -->
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- Lifestyle 类别 -->
+                {% set lifestyle_tags = [] %}
+                {% for tag in stats.top_tags %}
+                    {% if tag[1] == 'Lifestyle' %}
+                        {% set _ = lifestyle_tags.append(tag) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if lifestyle_tags %}
+                <div class="category-section">
+                    <div class="category-title">
+                        <i class="fas fa-coffee"></i> Lifestyle
+                    </div>
+                    {% for tag in lifestyle_tags %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="me-2">{{ tag[0] }}</span> <!-- tag_name -->
+                        <span class="badge bg-primary">{{ tag[2] }}</span> <!-- count -->
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                <!-- 如果没有兴趣标签 -->
+                {% if not mbti_tags and not personality_tags and not hobby_tags and not lifestyle_tags %}
+                <div class="text-center py-3">
+                    <i class="fas fa-tag text-muted mb-2"></i>
+                    <p class="text-muted">No popular interests yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

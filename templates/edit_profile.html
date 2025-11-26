@@ -1,0 +1,486 @@
+<!-- templates/profile/edit_profile.html -->
+{% extends "user_base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .edit-container {
+        min-height: 100vh;
+        padding-top: 60px; /* 为导航栏留出空间 */
+        padding-bottom: 2rem;
+        box-sizing: border-box;
+        background: var(--white);
+    }
+    
+    .edit-card {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin: 0 auto;
+        max-width: 1200px;
+        transition: transform 0.3s ease;
+    }
+    
+    .edit-header {
+        background: linear-gradient(135deg, var(--red-1) 0%, var(--red-2) 100%);
+        padding: 2rem;
+        text-align: center;
+        color: var(--white);
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .edit-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .edit-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0;
+        font-weight: 300;
+    }
+    
+    .edit-body {
+        padding: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+        background-color: var(--white);
+    }
+    
+    .form-select:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(194, 0, 65, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: var(--border-color);
+        color: var(--text-dark);
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-bg);
+        border-color: var(--gray-bg);
+    }
+    
+    .quick-actions {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+    }
+    
+    .action-btn {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        text-decoration: none;
+        color: var(--text-dark);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+    
+    .action-btn:hover {
+        background: var(--gray-bg);
+        transform: translateX(5px);
+    }
+    
+    .action-btn i {
+        margin-right: 0.75rem;
+        width: 24px;
+        text-align: center;
+        color: var(--red-2);
+    }
+    
+    .form-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: var(--gray-bg);
+        border-left: 4px solid var(--red-2);
+    }
+    
+    .form-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--red-2);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-title i {
+        margin-right: 0.5rem;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.5rem;
+    }
+    
+    .col-md-4, .col-md-8 {
+        padding: 0 0.5rem;
+    }
+    
+    @media (max-width: 768px) {
+        .col-md-4, .col-md-8 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="edit-container">
+    <div class="edit-card">
+        <div class="edit-header">
+            <h1 class="edit-title">Edit Profile</h1>
+            <p class="edit-subtitle">Update your personal information</p>
+        </div>
+        
+        <div class="edit-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <form method="POST">
+                        <!-- Personal Information Section -->
+                        <div class="form-section">
+                            <h3 class="form-title">
+                                <i class="fas fa-user-edit"></i> Personal Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="mb-3">
+                                    <label for="nickname" class="form-label">Nickname</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="nickname" 
+                                           name="nickname"
+                                           value="{{ student.nickname or '' }}"
+                                           required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select class="form-select" id="gender" name="gender" required>
+                                        <option value="M" {% if student.gender == 'M' %}selected{% endif %}>Male</option>
+                                        <option value="F" {% if student.gender == 'F' %}selected{% endif %}>Female</option>
+                                        <option value="X" {% if student.gender == 'X' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="college" class="form-label">College</label>
+                                    <select class="form-select" id="college" name="college" required>
+                                        <option value="College of Business" {% if student.college == 'College of Business' %}selected{% endif %}>College of Business</option>
+                                        <option value="College of Liberal Arts and Social Sciences" {% if student.college == 'College of Liberal Arts and Social Sciences' %}selected{% endif %}>College of Liberal Arts and Social Sciences</option>
+                                        <option value="College of Science" {% if student.college == 'College of Science' %}selected{% endif %}>College of Science</option>
+                                        <option value="College of Engineering" {% if student.college == 'College of Engineering' %}selected{% endif %}>College of Engineering</option>
+                                        <option value="College of Veterinary Medicine and Life Sciences" {% if student.college == 'College of Veterinary Medicine and Life Sciences' %}selected{% endif %}>College of Veterinary Medicine and Life Sciences</option>
+                                        <option value="Other" {% if student.college == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="major" class="form-label">Major</label>
+                                    <select class="form-select" id="major" name="major" required>
+                                        <option value="Accounting" {% if student.major == 'Accounting' %}selected{% endif %}>Accounting</option>
+                                        <option value="Finance" {% if student.major == 'Finance' %}selected{% endif %}>Finance</option>
+                                        <option value="Marketing" {% if student.major == 'Marketing' %}selected{% endif %}>Marketing</option>
+                                        <option value="Management" {% if student.major == 'Management' %}selected{% endif %}>Management</option>
+                                        <option value="Computer Science" {% if student.major == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+                                        <option value="Electronic Engineering" {% if student.major == 'Electronic Engineering' %}selected{% endif %}>Electronic Engineering</option>
+                                        <option value="Mechanical Engineering" {% if student.major == 'Mechanical Engineering' %}selected{% endif %}>Mechanical Engineering</option>
+                                        <option value="Biomedical Engineering" {% if student.major == 'Biomedical Engineering' %}selected{% endif %}>Biomedical Engineering</option>
+                                        <option value="Mathematics" {% if student.major == 'Mathematics' %}selected{% endif %}>Mathematics</option>
+                                        <option value="Physics" {% if student.major == 'Physics' %}selected{% endif %}>Physics</option>
+                                        <option value="Chemistry" {% if student.major == 'Chemistry' %}selected{% endif %}>Chemistry</option>
+                                        <option value="Biology" {% if student.major == 'Biology' %}selected{% endif %}>Biology</option>
+                                        <option value="Media and Communication" {% if student.major == 'Media and Communication' %}selected{% endif %}>Media and Communication</option>
+                                        <option value="Psychology" {% if student.major == 'Psychology' %}selected{% endif %}>Psychology</option>
+                                        <option value="Economics" {% if student.major == 'Economics' %}selected{% endif %}>Economics</option>
+                                        <option value="English" {% if student.major == 'English' %}selected{% endif %}>English</option>
+                                        <option value="Veterinary Medicine" {% if student.major == 'Veterinary Medicine' %}selected{% endif %}>Veterinary Medicine</option>
+                                        <option value="Biomedical Sciences" {% if student.major == 'Biomedical Sciences' %}selected{% endif %}>Biomedical Sciences</option>
+                                        <option value="Other" {% if student.major == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="year_of_study" class="form-label">Year of Study</label>
+                                    <select class="form-select" id="year_of_study" name="year_of_study" required>
+                                        <option value="1" {% if student.year_of_study == 1 %}selected{% endif %}>1</option>
+                                        <option value="2" {% if student.year_of_study == 2 %}selected{% endif %}>2</option>
+                                        <option value="3" {% if student.year_of_study == 3 %}selected{% endif %}>3</option>
+                                        <option value="4" {% if student.year_of_study == 4 %}selected{% endif %}>4</option>
+                                        <option value="5" {% if student.year_of_study == 5 %}selected{% endif %}>5</option>
+                                        <option value="6" {% if student.year_of_study == 6 %}selected{% endif %}>6</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="identity" class="form-label">Identity</label>
+                                    <select class="form-select" id="identity" name="identity" required>
+                                        <option value="Undergraduate" {% if student.identity == 'Undergraduate' %}selected{% endif %}>Undergraduate</option>
+                                        <option value="Graduate" {% if student.identity == 'Graduate' %}selected{% endif %}>Graduate</option>
+                                        <option value="PhD" {% if student.identity == 'PhD' %}selected{% endif %}>PhD</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" 
+                                           class="form-control" 
+                                           id="email" 
+                                           name="email"
+                                           value="{{ student.email or '' }}"
+                                           required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="wechat_id" class="form-label">WeChat ID</label>
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="wechat_id" 
+                                           name="wechat_id"
+                                           value="{{ student.wechat_id or '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional Information Section -->
+                        <div class="form-section">
+                            <h3 class="form-title">
+                                <i class="fas fa-info-circle"></i> Additional Information
+                            </h3>
+                            <div class="form-grid">
+                                {% if student.birth_date %}
+                                <div class="mb-3">
+                                    <label for="birth_date" class="form-label">Birth Date</label>
+                                    <input type="date" 
+                                           class="form-control" 
+                                           id="birth_date" 
+                                           name="birth_date"
+                                           value="{{ student.birth_date.strftime('%Y-%m-%d') if student.birth_date else '' }}">
+                                </div>
+                                {% else %}
+                                <div class="mb-3">
+                                    <label for="birth_date" class="form-label">Birth Date</label>
+                                    <input type="date" 
+                                           class="form-control" 
+                                           id="birth_date" 
+                                           name="birth_date"
+                                           value="">
+                                </div>
+                                {% endif %}
+                                
+                                <div class="mb-3">
+                                    <label for="height" class="form-label">Height (cm)</label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="height" 
+                                           name="height"
+                                           step="0.01"
+                                           min="100"
+                                           max="250"
+                                           value="{{ student.height or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="weight" class="form-label">Weight (jin)</label>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           id="weight" 
+                                           name="weight"
+                                           step="0.1"
+                                           min="50"
+                                           max="300"
+                                           value="{{ student.weight or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="hometown" class="form-label">Hometown</label>
+                                    <select class="form-select" id="hometown" name="hometown">
+                                        <option value="" {% if not student.hometown %}selected{% endif %}>Select...</option>
+                                        <option value="Beijing" {% if student.hometown == 'Beijing' %}selected{% endif %}>Beijing</option>
+                                        <option value="Shanghai" {% if student.hometown == 'Shanghai' %}selected{% endif %}>Shanghai</option>
+                                        <option value="Guangdong" {% if student.hometown == 'Guangdong' %}selected{% endif %}>Guangdong</option>
+                                        <option value="Zhejiang" {% if student.hometown == 'Zhejiang' %}selected{% endif %}>Zhejiang</option>
+                                        <option value="Jiangsu" {% if student.hometown == 'Jiangsu' %}selected{% endif %}>Jiangsu</option>
+                                        <option value="Sichuan" {% if student.hometown == 'Sichuan' %}selected{% endif %}>Sichuan</option>
+                                        <option value="Hubei" {% if student.hometown == 'Hubei' %}selected{% endif %}>Hubei</option>
+                                        <option value="Hunan" {% if student.hometown == 'Hunan' %}selected{% endif %}>Hunan</option>
+                                        <option value="Anhui" {% if student.hometown == 'Anhui' %}selected{% endif %}>Anhui</option>
+                                        <option value="Fujian" {% if student.hometown == 'Fujian' %}selected{% endif %}>Fujian</option>
+                                        <option value="Shandong" {% if student.hometown == 'Shandong' %}selected{% endif %}>Shandong</option>
+                                        <option value="Henan" {% if student.hometown == 'Henan' %}selected{% endif %}>Henan</option>
+                                        <option value="Hebei" {% if student.hometown == 'Hebei' %}selected{% endif %}>Hebei</option>
+                                        <option value="Shaanxi" {% if student.hometown == 'Shaanxi' %}selected{% endif %}>Shaanxi</option>
+                                        <option value="Liaoning" {% if student.hometown == 'Liaoning' %}selected{% endif %}>Liaoning</option>
+                                        <option value="Jilin" {% if student.hometown == 'Jilin' %}selected{% endif %}>Jilin</option>
+                                        <option value="Heilongjiang" {% if student.hometown == 'Heilongjiang' %}selected{% endif %}>Heilongjiang</option>
+                                        <option value="Tianjin" {% if student.hometown == 'Tianjin' %}selected{% endif %}>Tianjin</option>
+                                        <option value="Chongqing" {% if student.hometown == 'Chongqing' %}selected{% endif %}>Chongqing</option>
+                                        <option value="Jiangxi" {% if student.hometown == 'Jiangxi' %}selected{% endif %}>Jiangxi</option>
+                                        <option value="Guizhou" {% if student.hometown == 'Guizhou' %}selected{% endif %}>Guizhou</option>
+                                        <option value="Yunnan" {% if student.hometown == 'Yunnan' %}selected{% endif %}>Yunnan</option>
+                                        <option value="Shanxi" {% if student.hometown == 'Shanxi' %}selected{% endif %}>Shanxi</option>
+                                        <option value="Gansu" {% if student.hometown == 'Gansu' %}selected{% endif %}>Gansu</option>
+                                        <option value="Qinghai" {% if student.hometown == 'Qinghai' %}selected{% endif %}>Qinghai</option>
+                                        <option value="Hainan" {% if student.hometown == 'Hainan' %}selected{% endif %}>Hainan</option>
+                                        <option value="Inner Mongolia" {% if student.hometown == 'Inner Mongolia' %}selected{% endif %}>Inner Mongolia</option>
+                                        <option value="Guangxi" {% if student.hometown == 'Guangxi' %}selected{% endif %}>Guangxi</option>
+                                        <option value="Ningxia" {% if student.hometown == 'Ningxia' %}selected{% endif %}>Ningxia</option>
+                                        <option value="Xinjiang" {% if student.hometown == 'Xinjiang' %}selected{% endif %}>Xinjiang</option>
+                                        <option value="Tibet" {% if student.hometown == 'Tibet' %}selected{% endif %}>Tibet</option>
+                                        <option value="Hong Kong" {% if student.hometown == 'Hong Kong' %}selected{% endif %}>Hong Kong</option>
+                                        <option value="Macao" {% if student.hometown == 'Macao' %}selected{% endif %}>Macao</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="marital_status" class="form-label">Marital Status</label>
+                                    <select class="form-select" id="marital_status" name="marital_status">
+                                        <option value="" {% if not student.marital_status %}selected{% endif %}>Select...</option>
+                                        <option value="Single" {% if student.marital_status == 'Single' %}selected{% endif %}>Single</option>
+                                        <option value="Divorced-Single" {% if student.marital_status == 'Divorced-Single' %}selected{% endif %}>Divorced-Single</option>
+                                        <option value="Divorced-With-Child" {% if student.marital_status == 'Divorced-With-Child' %}selected{% endif %}>Divorced-With-Child</option>
+                                        <option value="Divorced-Without-Child" {% if student.marital_status == 'Divorced-Without-Child' %}selected{% endif %}>Divorced-Without-Child</option>
+                                        <option value="Widowed" {% if student.marital_status == 'Widowed' %}selected{% endif %}>Widowed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bio Section -->
+                        <div class="form-section">
+                            <h3 class="form-title">
+                                <i class="fas fa-quote-left"></i> About Me
+                            </h3>
+                            <div class="mb-3">
+                                <label for="bio" class="form-label">Bio</label>
+                                <textarea class="form-control" 
+                                          id="bio" 
+                                          name="bio" 
+                                          rows="5">{{ student.bio or '' }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Ideal Partner Section -->
+                        <div class="form-section">
+                            <h3 class="form-title">
+                                <i class="fas fa-heart"></i> Ideal Partner
+                            </h3>
+                            <div class="mb-3">
+                                <label for="ideal_partner" class="form-label">What you're looking for</label>
+                                <textarea class="form-control" 
+                                          id="ideal_partner" 
+                                          name="ideal_partner" 
+                                          rows="3">{{ student.ideal_partner or '' }}</textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Save Button -->
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <a href="{{ url_for('profile.view_profile', student_id=student.student_id) }}" 
+                               class="btn btn-outline-secondary ms-2">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="quick-actions">
+                        <h4 class="mb-3">
+                            <i class="fas fa-bolt"></i> Quick Actions
+                        </h4>
+                        
+                        <a href="{{ url_for('profile.edit_profile', student_id=student.student_id) }}" class="action-btn" style="background: var(--gray-bg);">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        
+                        <a href="{{ url_for('profile.settings', student_id=student.student_id) }}" class="action-btn">
+                            <i class="fas fa-cog"></i> Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

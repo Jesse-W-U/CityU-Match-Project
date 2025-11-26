@@ -1,0 +1,239 @@
+<!-- templates/admin/edit_user.html -->
+{% extends "admin/base.html" %}
+
+{% block content %}
+<style>
+    /* 你指定的颜色 */
+    :root {
+        --red-1: rgb(133, 1, 45);
+        --red-2: rgb(194, 0, 65);
+        --red-3: rgb(254, 25, 102);
+        --white: #FFFFFF;
+        --gray-bg: #F5F7FA;
+        --text-dark: #212529;
+        --text-light: #6C757D;
+        --border-color: #E9ECEF;
+    }
+    
+    .edit-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 0;
+    }
+    
+    .edit-card {
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+    
+    .edit-header {
+        background: linear-gradient(135deg, var(--red-1) 0%, var(--red-2) 100%);
+        padding: 2rem;
+        text-align: center;
+        color: var(--white);
+        position: relative;
+    }
+    
+    .edit-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .edit-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0;
+        font-weight: 300;
+    }
+    
+    .edit-body {
+        padding: 2rem;
+    }
+    
+    .form-label {
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    
+    .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+    }
+    
+    .form-control:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        width: 100%;
+        background-color: var(--white);
+    }
+    
+    .form-select:focus {
+        border-color: var(--red-2);
+        box-shadow: 0 0 0 0.2rem rgba(194, 0, 65, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--red-2) 0%, var(--red-1) 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--red-3) 0%, var(--red-2) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(194, 0, 65, 0.3);
+    }
+    
+    .btn-outline-secondary {
+        border-color: var(--border-color);
+        color: var(--text-dark);
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: var(--gray-bg);
+        border-color: var(--gray-bg);
+    }
+    
+    .user-id-display {
+        background: var(--gray-bg);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-family: monospace;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="edit-container">
+    <div class="edit-card">
+        <div class="edit-header">
+            <h1 class="edit-title">Edit User</h1>
+            <p class="edit-subtitle">Update user information</p>
+        </div>
+        
+        <div class="edit-body">
+            <div class="user-id-display">
+                User ID: {{ user[0] }}
+            </div>
+            
+            <form method="POST">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="student" {% if user[1] == 'student' %}selected{% endif %}>Student</option>
+                                <option value="admin" {% if user[1] == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name"
+                                   value="{{ user[4] or '' }}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="college" class="form-label">College</label>
+                            <select class="form-select" id="college" name="college">
+                                <option value="College of Business" {% if user[5] == 'College of Business' %}selected{% endif %}>College of Business</option>
+                                <option value="College of Liberal Arts and Social Sciences" {% if user[5] == 'College of Liberal Arts and Social Sciences' %}selected{% endif %}>College of Liberal Arts and Social Sciences</option>
+                                <option value="College of Science" {% if user[5] == 'College of Science' %}selected{% endif %}>College of Science</option>
+                                <option value="College of Engineering" {% if user[5] == 'College of Engineering' %}selected{% endif %}>College of Engineering</option>
+                                <option value="College of Veterinary Medicine and Life Sciences" {% if user[5] == 'College of Veterinary Medicine and Life Sciences' %}selected{% endif %}>College of Veterinary Medicine and Life Sciences</option>
+                                <option value="Other" {% if user[5] == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="major" class="form-label">Major</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="major" 
+                                   name="major"
+                                   value="{{ user[6] or '' }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email"
+                           value="{{ user[7] or '' }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="wechat_id" class="form-label">WeChat ID</label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="wechat_id" 
+                           name="wechat_id"
+                           value="{{ user[8] or '' }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea class="form-control" 
+                              id="bio" 
+                              name="bio" 
+                              rows="4">{{ user[9] or '' }}</textarea>
+                </div>
+                
+                <div class="d-flex">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                    <a href="{{ url_for('admin.user_management') }}" 
+                       class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
