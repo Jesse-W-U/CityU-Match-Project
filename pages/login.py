@@ -8,14 +8,11 @@ bp = Blueprint('login', __name__)
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    """用户注册页面"""
     if request.method == 'POST':
-        # 获取基本信息
         student_id = request.form.get('student_id', '').strip()
         password = request.form.get('password', '')
         confirm_password = request.form.get('confirm_password', '')
         
-        # 验证基本信息
         if not student_id or not password or not confirm_password:
             flash("All fields are required", "danger")
             return redirect(url_for('login.register'))
@@ -28,12 +25,10 @@ def register():
             flash("Password must be at least 6 characters", "danger")
             return redirect(url_for('login.register'))
         
-        # 验证学号格式
         if not student_id.startswith('58') or len(student_id) != 8 or not student_id.isdigit():
             flash("Invalid student ID format (must be 8 digits starting with 58)", "danger")
             return redirect(url_for('login.register'))
         
-        # 检查学号是否已存在
         with get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT user_id FROM user WHERE user_id = %s", (student_id,))
@@ -41,19 +36,16 @@ def register():
                     flash("Student ID already exists", "danger")
                     return redirect(url_for('login.register'))
         
-        # 创建用户
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         
         with get_connection() as conn:
             with conn.cursor() as cur:
                 try:
-                    # 创建用户记录
                     cur.execute("""
                         INSERT INTO user (user_id, password_hash, role, is_active)
                         VALUES (%s, %s, 'student', 1)
                     """, (student_id, hashed_password.decode()))
                     
-                    # 创建学生记录
                     cur.execute("""
                         INSERT INTO student (
                             student_id, name, nickname, gender, college, year_of_study,
@@ -73,7 +65,6 @@ def register():
                         request.form.get('bio', '').strip()
                     ))
                     
-                    # 处理兴趣标签
                     selected_tags = request.form.getlist('interests')
                     if selected_tags:
                         for tag_id in selected_tags:
@@ -89,13 +80,11 @@ def register():
                     flash(f"Registration failed: {str(e)}", "danger")
                     return redirect(url_for('login.register'))
     
-    # 获取所有兴趣标签（转换为字典格式）
     all_tags = []
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT tag_id, tag_name, category FROM interest_tag WHERE is_active = 1 ORDER BY category, tag_name")
             raw_tags = cur.fetchall()
-            # 转换为字典格式，便于模板使用
             all_tags = [
                 {
                     'tag_id': tag[0],      # tag_id
@@ -110,26 +99,20 @@ def register():
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login_form():
-    """登录页面"""
     if request.method == 'POST':
-        # 修复：同时支持 student_id 和 user_id 字段名
         student_id = request.form.get('student_id', '').strip() or request.form.get('user_id', '').strip()
         password = request.form.get('password', '')
         
-        # 调试信息（生产环境可移除）
         print(f"DEBUG: Attempting login with student_id: {student_id}")
         
         user = authenticate_user(student_id, password)
         if user:
-            # ✅ 修正：使用正确的字段名
             session['user_id'] = user['user_id']
             session['role'] = user['role']
             
-            # 根据角色跳转
             if user['role'] == 'admin':
                 return redirect(url_for('admin.dashboard'))
             else:
-                # ✅ 修正：跳转到 profile 页面时使用正确的 student_id
                 return redirect(url_for('profile.view_profile', student_id=user['user_id']))
         else:
             flash("Invalid student ID or password", "danger")

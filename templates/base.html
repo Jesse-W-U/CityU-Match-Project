@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 你指定的颜色 */
         :root {
             --red-1: rgb(133, 1, 45);
             --red-2: rgb(194, 0, 65);
@@ -58,7 +57,6 @@
 <body>
     <nav class="navbar navbar-dark">
         <div class="container">
-            <!-- 点击标题跳转到当前用户主页 -->
             <a class="navbar-brand" 
                href="{% if session.user_id %}
                          {% if session.role == 'admin' %}
@@ -88,7 +86,6 @@
     </nav>
 
     <div class="container">
-        <!-- Flash 消息放在这里 -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}

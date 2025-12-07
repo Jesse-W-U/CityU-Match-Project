@@ -6,7 +6,6 @@
 
 {% block content %}
 <style>
-    /* 你指定的颜色 */
     :root {
         --red-1: rgb(133, 1, 45);
         --red-2: rgb(194, 0, 65);
@@ -175,7 +174,6 @@
     }
 </style>
 
-<!-- 5个统计卡片在同一行 -->
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-number">{{ stats.active_students }}</div>
@@ -251,7 +249,6 @@
     </div>
     
     <div class="col-md-6">
-        <!-- 新增：学生被点赞排名 -->
         <div class="card">
             <div class="card-header">
                 <h3 class="section-title">
@@ -276,7 +273,6 @@
             </div>
         </div>
 
-        <!-- 在 Popular Interests 部分，修正为元组索引格式 -->
         <div class="card mt-4">
             <div class="card-header">
                 <h3 class="section-title">
@@ -284,7 +280,6 @@
                 </h3>
             </div>
             <div class="card-body">
-                <!-- MBTI 类别 -->
                 {% set mbti_tags = [] %}
                 {% for tag in stats.top_tags %}
                     {% if tag[1] == 'MBTI' %}
@@ -306,7 +301,6 @@
                 </div>
                 {% endif %}
                 
-                <!-- Personality 类别 -->
                 {% set personality_tags = [] %}
                 {% for tag in stats.top_tags %}
                     {% if tag[1] == 'Personality' %}
@@ -328,7 +322,6 @@
                 </div>
                 {% endif %}
                 
-                <!-- Hobby 类别 -->
                 {% set hobby_tags = [] %}
                 {% for tag in stats.top_tags %}
                     {% if tag[1] == 'Hobby' %}
@@ -350,7 +343,6 @@
                 </div>
                 {% endif %}
                 
-                <!-- Lifestyle 类别 -->
                 {% set lifestyle_tags = [] %}
                 {% for tag in stats.top_tags %}
                     {% if tag[1] == 'Lifestyle' %}
@@ -372,7 +364,6 @@
                 </div>
                 {% endif %}
                 
-                <!-- 如果没有兴趣标签 -->
                 {% if not mbti_tags and not personality_tags and not hobby_tags and not lifestyle_tags %}
                 <div class="text-center py-3">
                     <i class="fas fa-tag text-muted mb-2"></i>

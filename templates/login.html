@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-    /* 你指定的颜色 */
     :root {
         --red-1: rgb(133, 1, 45);
         --red-2: rgb(194, 0, 65);
@@ -213,7 +212,6 @@
     }
 </style>
 
-<!-- 新增主要内容包装器 -->
 <div class="main-content">
     <div class="login-container">
         <div class="login-card">
@@ -270,7 +268,6 @@
                     </button>
                 </form>
                 
-                <!-- 新增：注册链接 -->
                 <div class="register-section">
                     <p class="mb-2">Don't have an account?</p>
                     <a href="{{ url_for('login.register') }}" class="register-link">

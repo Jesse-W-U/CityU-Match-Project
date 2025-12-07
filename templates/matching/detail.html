@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-    /* 你指定的颜色 */
     :root {
         --red-1: rgb(133, 1, 45);
         --red-2: rgb(194, 0, 65);
@@ -17,7 +16,7 @@
     
     .detail-container {
         min-height: 100vh;
-        padding-top: 60px; /* 为导航栏留出空间 */
+        padding-top: 60px;
         padding-bottom: 2rem;
         box-sizing: border-box;
         background: var(--white);
@@ -295,14 +294,12 @@
                     <i class="fas fa-arrow-left"></i> Back to Search
                 </a>
                 
-                <!-- 发送邀约表单 -->
                 <form method="POST" action="{{ url_for('matching.send_invitation_to', target_id=student.student_id) }}" style="display: inline;">
                     <button type="submit" class="action-btn">
                         <i class="fas fa-paper-plane"></i> Send Invitation
                     </button>
                 </form>
                 
-                <!-- 点赞/取消点赞表单 -->
                 {% set like_status = get_like_status(session.user_id, student.student_id) %}
                 <form method="POST" action="{{ url_for('matching.like_student', target_id=student.student_id) }}" style="display: inline;">
                     {% if like_status == 'liked' %}

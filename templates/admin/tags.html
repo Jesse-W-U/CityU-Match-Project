@@ -3,7 +3,6 @@
 
 {% block content %}
 <style>
-    /* 你指定的颜色 */
     :root {
         --red-1: rgb(133, 1, 45);
         --red-2: rgb(194, 0, 65);
@@ -140,10 +139,8 @@
     <h2 class="section-title">
         <i class="fas fa-tags"></i> Interest Tags Management
     </h2>
-    <!-- 移除了 "Add New Tag" 按钮 -->
 </div>
 
-<!-- 筛选器 -->
 <div class="filter-section">
     <form method="GET">
         <div class="row align-items-end">
@@ -175,7 +172,6 @@
     </form>
 </div>
 
-<!-- 标签表格 -->
 <div class="card">
     <div class="table-responsive">
         <table class="table table-hover mb-0">
@@ -220,7 +216,6 @@
                     </td>
                     <td>{{ tag[4].strftime('%Y-%m-%d %H:%M') }}</td>
                     <td>
-                        <!-- 移除了 Edit 按钮 -->
                         <form method="POST" action="{{ url_for('admin.toggle_tag_status', tag_id=tag[0]) }}" style="display: inline;">
                             {% if tag[3] %}
                             <button type="submit" class="action-btn btn-outline-secondary" onclick="return confirm('Are you sure you want to disable this tag?')">
@@ -240,5 +235,4 @@
     </div>
 </div>
 
-<!-- 移除了整个添加标签模态框和相关JavaScript -->
 {% endblock %}

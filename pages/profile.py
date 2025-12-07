@@ -1,14 +1,13 @@
 # pages/profile.py
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from dal import get_student, get_student_interests, get_connection  # ← 关键：导入 get_connection
+from dal import get_student, get_student_interests, get_connection
 import bcrypt
-from dal import authenticate_user  # ← 也需要 authenticate_user
+from dal import authenticate_user
 
 bp = Blueprint('profile', __name__, url_prefix='/user')
 
 @bp.route('/<student_id>')
 def view_profile(student_id):
-    """查看个人资料"""
     student = get_student(student_id)
     if not student:
         return "Student not found", 404
@@ -22,18 +21,15 @@ def view_profile(student_id):
 # pages/profile.py
 @bp.route('/<student_id>/settings')
 def settings(student_id):
-    """设置页面，默认显示 Edit Profile"""
     return redirect(url_for('profile.edit_profile', student_id=student_id))
 
 @bp.route('/<student_id>/settings/edit', methods=['GET', 'POST'])
 def edit_profile(student_id):
-    """编辑个人资料"""
     student = get_student(student_id)
     if not student:
         return "Student not found", 404
     
     if request.method == 'POST':
-        # 获取表单数据
         nickname = request.form.get('nickname', '').strip()
         gender = request.form.get('gender', '')
         college = request.form.get('college', '')
@@ -43,7 +39,6 @@ def edit_profile(student_id):
         email = request.form.get('email', '').strip()
         wechat_id = request.form.get('wechat_id', '').strip()
         
-        # 新增字段
         birth_date = request.form.get('birth_date', '')
         height = request.form.get('height', type=float)
         weight = request.form.get('weight', type=float)
@@ -52,7 +47,6 @@ def edit_profile(student_id):
         bio = request.form.get('bio', '').strip()
         ideal_partner = request.form.get('ideal_partner', '').strip()
         
-        # 更新学生信息
         with get_connection() as conn:
             with conn.cursor() as cur:
                 sql = """
@@ -83,7 +77,6 @@ def edit_profile(student_id):
 
 @bp.route('/<student_id>/settings/password', methods=['GET', 'POST'])
 def change_password(student_id):
-    """修改密码"""
     student = get_student(student_id)
     if not student:
         return "Student not found", 404
@@ -93,13 +86,11 @@ def change_password(student_id):
         new_password = request.form.get('new_password', '')
         confirm_password = request.form.get('confirm_password', '')
         
-        # 验证当前密码
         user = authenticate_user(student_id, current_password)
         if not user:
             flash("Current password is incorrect", "danger")
             return redirect(url_for('profile.change_password', student_id=student_id))
         
-        # 验证新密码
         if len(new_password) < 6:
             flash("New password must be at least 6 characters", "danger")
             return redirect(url_for('profile.change_password', student_id=student_id))
@@ -108,7 +99,6 @@ def change_password(student_id):
             flash("Passwords do not match", "danger")
             return redirect(url_for('profile.change_password', student_id=student_id))
         
-        # 更新密码
         hashed_password = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt())
         with get_connection() as conn:
             with conn.cursor() as cur:
@@ -125,7 +115,6 @@ def change_password(student_id):
 
 @bp.route('/')
 def user_home():
-    """用户主页重定向"""
     if session.get('user_id'):
         return redirect(url_for('profile.view_profile', student_id=session['user_id']))
     else:

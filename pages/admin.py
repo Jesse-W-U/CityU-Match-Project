@@ -16,32 +16,25 @@ def admin_required(f):
 @bp.route('/')
 @admin_required
 def dashboard():
-    """管理员仪表盘"""
     stats = {}
     
     with get_connection() as conn:
-        with conn.cursor() as cur:  # ✅ 保持普通游标
-            # 1. 活跃学生数
+        with conn.cursor() as cur:
             cur.execute("SELECT COUNT(*) FROM user WHERE role = 'student' AND is_active = 1")
             stats['active_students'] = cur.fetchone()[0]
             
-            # 2. 管理员数
             cur.execute("SELECT COUNT(*) FROM user WHERE role = 'admin'")
             stats['admin_count'] = cur.fetchone()[0]
             
-            # 3. 总兴趣标签数
             cur.execute("SELECT COUNT(*) FROM interest_tag")
             stats['total_tags'] = cur.fetchone()[0]
             
-            # 4. 总邀约数
             cur.execute("SELECT COUNT(*) FROM invitations")
             stats['total_invitations'] = cur.fetchone()[0]
             
-            # 5. 已接受邀约数
             cur.execute("SELECT COUNT(*) FROM invitations WHERE status = 'accepted'")
             stats['accepted_invitations'] = cur.fetchone()[0]
             
-            # 6. 最近注册用户（前10个）
             cur.execute("""
                 SELECT u.user_id, u.role, u.is_active, u.created_at,
                        s.name, s.college, s.major
@@ -52,7 +45,6 @@ def dashboard():
             """)
             stats['recent_users'] = cur.fetchall()
             
-            # 7. 热门兴趣标签TOP10（按类别分组）
             cur.execute("""
                 SELECT it.tag_name, it.category, COUNT(si.tag_id) AS count
                 FROM student_interest si
@@ -61,9 +53,8 @@ def dashboard():
                 ORDER BY count DESC
                 LIMIT 10
             """)
-            stats['top_tags'] = cur.fetchall()  # 返回元组列表: [(name, category, count), ...]
+            stats['top_tags'] = cur.fetchall()
             
-            # 8. 被点赞最多的前5名学生
             cur.execute("""
                 SELECT s.student_id, s.name, s.nickname, 
                        COALESCE(like_counts.count, 0) as like_count
@@ -78,7 +69,7 @@ def dashboard():
                 ORDER BY like_counts.count DESC
                 LIMIT 5
             """)
-            stats['top_liked_students'] = cur.fetchall()  # 返回元组列表: [(id, name, nickname, count), ...]
+            stats['top_liked_students'] = cur.fetchall()
     
     return render_template('admin/dashboard.html', stats=stats)
 
@@ -87,7 +78,6 @@ def dashboard():
 @bp.route('/users/page/<int:page>')
 @admin_required
 def user_management(page=1):
-    """用户管理页面（带分页）"""
     per_page = 10
     offset = (page - 1) * per_page
     
@@ -96,11 +86,9 @@ def user_management(page=1):
     
     with get_connection() as conn:
         with conn.cursor() as cur:
-            # 计算总数
             cur.execute("SELECT COUNT(*) FROM user")
             total_count = cur.fetchone()[0]
             
-            # 获取分页数据
             cur.execute("""
                 SELECT u.user_id, u.role, u.is_active, u.created_at,
                        s.name, s.college, s.major
@@ -111,7 +99,6 @@ def user_management(page=1):
             """, (per_page, offset))
             users = cur.fetchall()
     
-    # 计算分页信息
     total_pages = (total_count + per_page - 1) // per_page
     has_prev = page > 1
     has_next = page < total_pages
@@ -129,9 +116,7 @@ def user_management(page=1):
 @bp.route('/tags', methods=['GET', 'POST'])
 @admin_required
 def tag_management():
-    """兴趣标签管理页面（带筛选和新增功能）"""
     if request.method == 'POST':
-        # 处理新增标签
         tag_name = request.form.get('tag_name', '').strip()
         category = request.form.get('category', '').strip()
         
@@ -149,7 +134,6 @@ def tag_management():
         else:
             flash("Tag name and category are required", "danger")
     
-    # 获取筛选参数
     category_filter = request.args.get('category', '')
     status_filter = request.args.get('status', '')
     
@@ -157,7 +141,6 @@ def tag_management():
     
     with get_connection() as conn:
         with conn.cursor() as cur:
-            # 查询标签及其使用次数
             sql = """
                 SELECT it.tag_id, it.tag_name, it.category, it.is_active, it.created_at,
                        COALESCE(usage_counts.count, 0) as use_count
@@ -191,11 +174,9 @@ def tag_management():
 @bp.route('/tags/<int:tag_id>/toggle-status', methods=['POST'])
 @admin_required
 def toggle_tag_status(tag_id):
-    """切换标签状态"""
     with get_connection() as conn:
         with conn.cursor() as cur:
             try:
-                # 获取当前状态
                 cur.execute("SELECT is_active FROM interest_tag WHERE tag_id = %s", (tag_id,))
                 result = cur.fetchone()
                 
@@ -223,11 +204,9 @@ def toggle_tag_status(tag_id):
 @bp.route('/users/<user_id>/toggle-status', methods=['POST'])
 @admin_required
 def toggle_user_status(user_id):
-    """切换用户状态"""
     with get_connection() as conn:
         with conn.cursor() as cur:
             try:
-                # 获取当前状态
                 cur.execute("SELECT is_active FROM user WHERE user_id = %s", (user_id,))
                 result = cur.fetchone()
                 
@@ -255,10 +234,8 @@ def toggle_user_status(user_id):
 @bp.route('/users/<user_id>/edit', methods=['GET', 'POST'])
 @admin_required
 def edit_user(user_id):
-    """编辑用户信息"""
     with get_connection() as conn:
         with conn.cursor() as cur:
-            # 获取用户信息
             cur.execute("""
                 SELECT u.user_id, u.role, u.is_active, u.created_at,
                        s.name, s.college, s.major, s.email, s.wechat_id, s.bio
@@ -273,7 +250,6 @@ def edit_user(user_id):
                 return redirect(url_for('admin.user_management'))
     
     if request.method == 'POST':
-        # 更新用户信息
         new_role = request.form.get('role', '')
         new_name = request.form.get('name', '').strip()
         new_college = request.form.get('college', '').strip()
@@ -285,14 +261,12 @@ def edit_user(user_id):
         with get_connection() as conn:
             with conn.cursor() as cur:
                 try:
-                    # 更新用户表（角色）
                     cur.execute("""
                         UPDATE user 
                         SET role = %s, updated_at = NOW()
                         WHERE user_id = %s
                     """, (new_role, user_id))
                     
-                    # 如果是学生，更新学生表
                     if new_role == 'student':
                         cur.execute("""
                             UPDATE student 
@@ -312,11 +286,10 @@ def edit_user(user_id):
 @bp.route('/reports')
 @admin_required
 def report_management():
-    """举报管理页面"""
     reports = []
     
     with get_connection() as conn:
-        with conn.cursor() as cur:  # ✅ 修正：直接使用 dal.py 的游标（已处理 DictCursor）
+        with conn.cursor() as cur:
             cur.execute("""
                 SELECT r.*, 
                        s1.name as reporter_name, s1.nickname as reporter_nickname,
@@ -333,7 +306,6 @@ def report_management():
 @bp.route('/reports/<int:report_id>/resolve', methods=['POST'])
 @admin_required
 def resolve_report(report_id):
-    """处理举报（标记为已解决）"""
     with get_connection() as conn:
         with conn.cursor() as cur:
             try:
@@ -355,7 +327,6 @@ def resolve_report(report_id):
 @bp.route('/reports/<int:report_id>/delete', methods=['POST'])
 @admin_required
 def delete_report(report_id):
-    """删除举报记录"""
     with get_connection() as conn:
         with conn.cursor() as cur:
             try:
